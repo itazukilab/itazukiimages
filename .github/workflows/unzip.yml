@@ -7,32 +7,31 @@ on:
   workflow_dispatch:
 
 jobs:
-  unzip-images:
+  unzip-files:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-    - name: Create Images Directory
-      run: mkdir -p images
+      - name: Create Images Directory
+        run: mkdir -p images
 
-    - name: Extract All Zip Parts
-      run: |
-        for file in part*.zip; do
-          if [ -f "$file" ]; then
-            echo "Extracting $file..."
-            unzip -q -o "$file" -d images/
-          fi
-        done
+      - name: Unzip All Parts
+        run: |
+          for file in part*.zip; do
+            if [ -f "$file" ]; then
+              echo "Unzipping $file..."
+              unzip -o "$file" -d images/
+            fi
+          done
 
-    - name: Remove Zip Files to Save Space
-      run: rm -f part*.zip
+      - name: Clean Up Zip Files
+        run: rm -f part*.zip
 
-    - name: Commit and Push Extracted Images
-      run: |
-        git config --global user.name "itazuki"
-        git config --global user.email "itazuki@users.noreply.github.com"
-        git add images/
-        git commit -m "Deploy extracted NFT images" || echo "No changes to commit"
-        git push origin main
+      - name: Commit and Push Unzipped Images
+        run: |
+          git config --global user.name "itazukilab"
+          git config --global user.email "itazukilab@users.noreply.github.com"
+          git add images/
+          git commit -m "Automated unzip: Extract all NFT images" || exit 0
+          git push origin main
