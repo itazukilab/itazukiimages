@@ -1,4 +1,4 @@
-name: Unzip NFT Images
+name: Unzip NFT Images Directly
 
 on:
   push:
@@ -16,12 +16,13 @@ jobs:
       - name: Create Images Directory
         run: mkdir -p images
 
-      - name: Unzip All Parts
+      - name: Unzip All Parts Directly Into Images Folder
         run: |
           for file in part*.zip; do
             if [ -f "$file" ]; then
-              echo "Unzipping $file..."
-              unzip -o "$file" -d images/
+              echo "Extracting $file directly into images/..."
+              # -j flag junk paths (does not create subfolders from zip structure)
+              unzip -o -j "$file" -d images/
             fi
           done
 
@@ -33,5 +34,5 @@ jobs:
           git config --global user.name "itazukilab"
           git config --global user.email "itazukilab@users.noreply.github.com"
           git add images/
-          git commit -m "Automated unzip: Extract all NFT images" || exit 0
+          git commit -m "Fix: Extract all NFT images directly to images folder" || exit 0
           git push origin main
